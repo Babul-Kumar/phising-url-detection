@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishGuard AI — Phishing URL Detection System</title>
+  <meta name="description" content="Real-time phishing URL detection powered by machine learning. Analyse any URL for phishing risk instantly." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-deep:    #06070d;
+      --bg-card:    #0d0f1a;
+      --bg-glass:   rgba(255,255,255,0.04);
+      --border:     rgba(255,255,255,0.08);
+      --accent-blue:#4f9cf9;
+      --accent-cyan:#00d4ff;
+      --safe:       #22c55e;
+      --warn:       #f59e0b;
+      --danger:     #ef4444;
+      --text-1:     #f0f4ff;
+      --text-2:     #8892a8;
+      --text-3:     #4b5675;
+      --glow-safe:  0 0 40px rgba(34,197,94,0.25);
+      --glow-warn:  0 0 40px rgba(245,158,11,0.25);
+      --glow-danger:0 0 40px rgba(239,68,68,0.3);
+      --radius:     16px;
+      --radius-sm:  10px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-1);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background ───────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,156,249,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 60% at 10% 80%,  rgba(0,212,255,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 60% at 90% 90%,  rgba(239,68,68,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper { position: relative; z-index: 1; }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0;
+      z-index: 100;
+      background: rgba(6,7,13,0.85);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #4f9cf9, #00d4ff);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .logo span { color: var(--accent-cyan); }
+
+    .header-badge {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--safe);
+      font-weight: 500;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px;
+      background: var(--safe);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 80px 20px 40px;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px;
+      background: rgba(79,156,249,0.1);
+      border: 1px solid rgba(79,156,249,0.2);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #f0f4ff 0%, #8892a8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .hero h1 strong {
+      background: linear-gradient(135deg, #4f9cf9 0%, #00d4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-2);
+      max-width: 540px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    /* ── Stats Row ──────────────────────────────────────────────── */
+    .stats-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+    .stat-item { text-align: center; }
+    .stat-item .num { font-size: 1.6rem; font-weight: 800; color: var(--accent-blue); }
+    .stat-item .label { font-size: 0.78rem; color: var(--text-2); margin-top: 2px; }
+    .stat-sep { width: 1px; height: 36px; background: var(--border); }
+
+    /* ── Search Card ─────────────────────────────────────────── */
+    .search-section {
+      max-width: 760px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+
+    .search-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+    }
+
+    .search-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 12px;
+    }
+
+    .input-row {
+      display: flex; gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .url-input-wrap {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+    }
+    .url-input-icon {
+      position: absolute;
+      left: 16px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-3);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    #urlInput {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-1);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #urlInput::placeholder { color: var(--text-3); }
+    #urlInput:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(79,156,249,0.15);
+    }
+
+    #analyseBtn {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #4f9cf9, #00d4ff);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #06070d;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(79,156,249,0.3);
+    }
+    #analyseBtn:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(79,156,249,0.4);
+    }
+    #analyseBtn:disabled {
+      opacity: 0.6; cursor: not-allowed; transform: none;
+    }
+
+    /* Quick examples */
+    .quick-examples {
+      margin-top: 14px;
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
+    }
+    .quick-label { font-size: 0.75rem; color: var(--text-3); }
+    .quick-pill {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .quick-pill:hover { background: rgba(79,156,249,0.1); color: var(--accent-blue); border-color: rgba(79,156,249,0.3); }
+
+    /* ── Loader ──────────────────────────────────────────────── */
+    .loader-wrap {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 40px;
+      color: var(--text-2);
+    }
+    .loader-wrap.active { display: flex; }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid rgba(79,156,249,0.2);
+      border-top-color: var(--accent-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result Card ──────────────────────────────────────────── */
+    #resultSection { display: none; max-width: 760px; margin: 0 auto 60px; padding: 0 20px; }
+    #resultSection.visible { display: block; animation: fadeUp 0.4s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+    }
+
+    .result-header {
+      padding: 28px 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.4s;
+    }
+    .result-header.safe   { background: linear-gradient(135deg, rgba(34,197,94,0.08), transparent); }
+    .result-header.medium { background: linear-gradient(135deg, rgba(245,158,11,0.08), transparent); }
+    .result-header.danger { background: linear-gradient(135deg, rgba(239,68,68,0.1), transparent); }
+
+    .result-verdict {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .verdict-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    .verdict-icon.safe   { background: rgba(34,197,94,0.15); }
+    .verdict-icon.medium { background: rgba(245,158,11,0.15); }
+    .verdict-icon.danger { background: rgba(239,68,68,0.15); }
+
+    .verdict-label {
+      font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+    }
+    .verdict-label.safe   { color: var(--safe); }
+    .verdict-label.medium { color: var(--warn); }
+    .verdict-label.danger { color: var(--danger); }
+    .verdict-status {
+      margin-top: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+    .verdict-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-2);
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    /* Risk Score Gauge */
+    .risk-gauge-wrap {
+      text-align: center;
+    }
+    .risk-gauge-label { font-size: 0.72rem; color: var(--text-2); margin-bottom: 8px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+    .risk-circle {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border: 3px solid;
+      margin: 0 auto;
+    }
+    .risk-circle.safe   { border-color: var(--safe);   color: var(--safe); }
+    .risk-circle.medium { border-color: var(--warn);   color: var(--warn); }
+    .risk-circle.danger { border-color: var(--danger); color: var(--danger); }
+    .risk-value { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+    .risk-pct   { font-size: 0.7rem; color: var(--text-2); }
+
+    /* Result body */
+    .result-body { padding: 28px 32px; }
+
+    /* Feature chips row */
+    .chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border: 1px solid;
+    }
+    .chip.trusted { color: var(--safe);   background: rgba(34,197,94,0.08);  border-color: rgba(34,197,94,0.2); }
+    .chip.short   { color: var(--warn);   background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2); }
+    .chip.ip      { color: var(--danger); background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.2); }
+    .chip.info    { color: var(--accent-blue); background: rgba(79,156,249,0.08); border-color: rgba(79,156,249,0.2); }
+
+    /* Reasons */
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 14px;
+    }
+    .reasons-list { display: flex; flex-direction: column; gap: 10px; }
+    .reason-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .reason-bar-track {
+      flex-shrink: 0;
+      width: 56px; height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+    }
+    .reason-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #4f9cf9, #ef4444);
+      transition: width 0.6s ease;
+    }
+    .reason-info { flex: 1; min-width: 0; }
+    .reason-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-1);
+      font-weight: 600;
+    }
+    .reason-desc { font-size: 0.75rem; color: var(--text-2); margin-top: 2px; }
+    .reason-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-2);
+      flex-shrink: 0;
+    }
+
+    /* Warning */
+    .result-warning {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      color: var(--warn);
+      line-height: 1.5;
+    }
+
+    /* Meta row */
+    .result-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-3);
+      flex-wrap: wrap; gap: 8px;
+    }
+    .result-meta span { display: flex; align-items: center; gap: 5px; }
+    .meta-tag {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-blue);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .summary-card {
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      min-height: 92px;
+    }
+    .summary-card.safe   { box-shadow: inset 0 0 0 1px rgba(34,197,94,0.12); }
+    .summary-card.medium { box-shadow: inset 0 0 0 1px rgba(245,158,11,0.12); }
+    .summary-card.danger { box-shadow: inset 0 0 0 1px rgba(239,68,68,0.16); }
+    .summary-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 8px;
+    }
+    .summary-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-1);
+      line-height: 1.35;
+    }
+    .summary-note {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .detail-card {
+      padding: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .detail-copy {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-1);
+    }
+
+    .domain-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .domain-item {
+      padding: 12px;
+      background: rgba(6,7,13,0.4);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+    }
+    .domain-label {
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .domain-value {
+      font-size: 0.84rem;
+      color: var(--text-1);
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .section-kicker {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .timeline-card { margin-bottom: 24px; }
+    .timeline-list { display: flex; flex-direction: column; gap: 10px; }
+    .timeline-step {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .timeline-step:first-child { border-top: none; padding-top: 0; }
+    .timeline-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(79,156,249,0.12);
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+    .timeline-main { min-width: 0; }
+    .timeline-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .timeline-desc {
+      margin-top: 4px;
+      font-size: 0.76rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .timeline-score {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--accent-blue);
+      white-space: nowrap;
+    }
+
+    .reason-item {
+      align-items: flex-start;
+      padding: 14px 16px;
+    }
+    .reason-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(79,156,249,0.12);
+      font-size: 1.05rem;
+    }
+    .reason-content { flex: 1; min-width: 0; }
+    .reason-topline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .reason-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .reason-badge {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-2);
+    }
+    .reason-badge.risk {
+      color: var(--warn);
+      background: rgba(245,158,11,0.08);
+      border-color: rgba(245,158,11,0.16);
+    }
+    .reason-badge.rule {
+      color: var(--accent-blue);
+      background: rgba(79,156,249,0.08);
+      border-color: rgba(79,156,249,0.18);
+    }
+    .reason-weight {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--danger);
+      white-space: nowrap;
+    }
+
+    .result-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .action-btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(79,156,249,0.22);
+      background: rgba(79,156,249,0.08);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.18s, border-color 0.18s;
+    }
+    .action-btn:hover {
+      background: rgba(79,156,249,0.14);
+      border-color: rgba(79,156,249,0.35);
+      transform: translateY(-1px);
+    }
+    .action-status {
+      font-size: 0.76rem;
+      color: var(--text-2);
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .insight-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .summary-grid { grid-template-columns: 1fr; }
+      .domain-grid { grid-template-columns: 1fr; }
+      .timeline-step {
+        grid-template-columns: 30px minmax(0, 1fr);
+      }
+      .timeline-score {
+        grid-column: 2;
+      }
+      .result-actions {
+        align-items: stretch;
+      }
+      .action-btn {
+        width: 100%;
+      }
+    }
+
+    /* ── History ─────────────────────────────────────────────── */
+    .history-section {
+      max-width: 760px;
+      margin: 0 auto 80px;
+      padding: 0 20px;
+      display: none;
+    }
+    .history-section.visible { display: block; }
+    .history-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .history-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); }
+    .clear-btn {
+      font-size: 0.75rem; color: var(--text-3);
+      background: none; border: none; cursor: pointer;
+      transition: color 0.15s;
+    }
+    .clear-btn:hover { color: var(--danger); }
+
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .history-item:hover { border-color: rgba(79,156,249,0.3); background: rgba(79,156,249,0.04); }
+    .history-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .history-dot.safe   { background: var(--safe); }
+    .history-dot.medium { background: var(--warn); }
+    .history-dot.danger { background: var(--danger); }
+    .history-url {
+      flex: 1; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem; color: var(--text-2);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .history-score { font-size: 0.78rem; color: var(--text-3); flex-shrink: 0; }
+
+    /* ── How it Works ─────────────────────────────────────────── */
+    .how-section {
+      border-top: 1px solid var(--border);
+      padding: 80px 20px;
+    }
+    .how-inner { max-width: 860px; margin: 0 auto; }
+    .how-title {
+      font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px;
+      text-align: center; margin-bottom: 10px;
+    }
+    .how-sub { text-align: center; color: var(--text-2); margin-bottom: 52px; }
+    .how-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .how-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .how-card:hover { border-color: rgba(79,156,249,0.3); transform: translateY(-3px); }
+    .how-card-icon { font-size: 1.8rem; margin-bottom: 14px; }
+    .how-card-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+    .how-card-desc { font-size: 0.82rem; color: var(--text-2); line-height: 1.6; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+      font-size: 0.78rem; color: var(--text-3);
+    }
+
+    /* ── Error Banner ─────────────────────────────────────────── */
+    .error-banner {
+      display: none;
+      max-width: 760px; margin: 0 auto 20px; padding: 0 20px;
+    }
+    .error-banner.visible { display: block; }
+    .error-inner {
+      padding: 14px 18px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem; color: #fca5a5;
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      header { padding: 14px 20px; }
+      #analyseBtn { width: 100%; }
+      .result-header { flex-direction: column; }
+      .risk-gauge-wrap { margin-top: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      Phish<span>Guard</span> AI
+    </div>
+    <div class="header-badge">
+      <div class="pulse-dot"></div>
+      ML Model Active
+    </div>
+  </header>
+
+  <!-- ── Hero ───────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-eyebrow">🤖 Machine Learning Powered</div>
+    <h1>Detect <strong>Phishing URLs</strong><br />Before They Catch You</h1>
+    <p>
+      Real-time URL risk analysis using a Random Forest model trained on 549K+ real-world phishing and safe URLs.
+      19 engineered features, optimised threshold, hybrid domain awareness.
+    </p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="num">549K+</div>
+        <div class="label">Training URLs</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item">
+        <div class="num">19</div>
+        <div class="label">Engineered Features</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item">
+        <div class="num">~97%</div>
+        <div class="label">ROC-AUC</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item">
+        <div class="num">&lt;10ms</div>
+        <div class="label">Prediction Time</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Search Panel ──────────────────────────────────────────── -->
+  <section class="search-section">
+    <div class="search-card">
+      <div class="search-label">🔍 Analyse a URL</div>
+      <div class="input-row">
+        <div class="url-input-wrap">
+          <span class="url-input-icon">🔗</span>
+          <input
+            id="urlInput"
+            type="text"
+            placeholder="https://example.com or paste any suspicious URL…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <button id="analyseBtn" onclick="analyseURL()">Analyse →</button>
+      </div>
+      <div class="quick-examples">
+        <span class="quick-label">Try:</span>
+        <span class="quick-pill" onclick="fillUrl('https://www.google.com')">google.com</span>
+        <span class="quick-pill" onclick="fillUrl('https://github.com/openai')">github.com</span>
+        <span class="quick-pill" onclick="fillUrl('http://secure-login.verify-account.paypal.xyz')">paypal phishing</span>
+        <span class="quick-pill" onclick="fillUrl('http://192.168.1.1/bank/login/secure/verify')">IP-based URL</span>
+        <span class="quick-pill" onclick="fillUrl('tinyurl.com/bswqloj')">short URL</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Loader ─────────────────────────────────────────────────── -->
+  <div class="loader-wrap" id="loader">
+    <div class="spinner"></div>
+    <span>Analysing URL…</span>
+  </div>
+
+  <!-- ── Error ──────────────────────────────────────────────────── -->
+  <div class="error-banner" id="errorBanner">
+    <div class="error-inner" id="errorText"></div>
+  </div>
+
+  <!-- ── Result Card ────────────────────────────────────────────── -->
+  <section id="resultSection">
+    <div class="result-card">
+      <div class="result-header" id="resultHeader">
+        <div class="result-verdict">
+          <div class="verdict-icon" id="verdictIcon"></div>
+          <div>
+            <div class="verdict-label" id="verdictLabel"></div>
+            <div class="verdict-status" id="verdictStatus"></div>
+            <div class="verdict-url" id="verdictUrl"></div>
+          </div>
+        </div>
+        <div class="risk-gauge-wrap">
+          <div class="risk-gauge-label">Risk Score</div>
+          <div class="risk-circle" id="riskCircle">
+            <div class="risk-value" id="riskValue">—</div>
+            <div class="risk-pct">/ 100</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-body">
+        <div class="chip-row" id="chipRow"></div>
+        <div class="summary-grid" id="summaryGrid"></div>
+
+        <div class="insight-grid">
+          <div class="detail-card">
+            <div class="section-title">Why This Matters</div>
+            <div class="detail-copy" id="whyMatters"></div>
+          </div>
+          <div class="detail-card">
+            <div class="section-title">Domain Intelligence</div>
+            <div class="domain-grid" id="domainGrid"></div>
+          </div>
+        </div>
+
+        <div class="detail-card timeline-card">
+          <div class="section-head">
+            <div class="section-title">Risk Timeline</div>
+            <div class="section-kicker" id="timelineKicker"></div>
+          </div>
+          <div class="timeline-list" id="timelineList"></div>
+        </div>
+
+        <div class="section-head">
+          <div class="section-title">Primary Reasons</div>
+          <div class="section-kicker" id="reasonsKicker"></div>
+        </div>
+        <div class="reasons-list" id="reasonsList"></div>
+
+        <div class="result-warning" id="resultWarning" style="display:none"></div>
+        <div class="result-actions">
+          <button class="action-btn" type="button" onclick="copyCurrentReport()">Copy Report</button>
+          <button class="action-btn" type="button" onclick="exportCurrentJson()">Export JSON</button>
+          <span class="action-status" id="actionStatus"></span>
+        </div>
+
+        <div class="result-meta" id="resultMeta"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── History ────────────────────────────────────────────────── -->
+  <section class="history-section" id="historySection">
+    <div class="history-header">
+      <div class="history-title">📋 Scan History</div>
+      <button class="clear-btn" onclick="clearHistory()">Clear all</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </section>
+
+  <!-- ── How it Works ───────────────────────────────────────────── -->
+  <section class="how-section">
+    <div class="how-inner">
+      <h2 class="how-title">How PhishGuard Works</h2>
+      <p class="how-sub">A 3-stage pipeline ensures accurate, real-world reliable detection</p>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-card-icon">⚙️</div>
+          <div class="how-card-title">Feature Engineering</div>
+          <div class="how-card-desc">
+            19 hand-crafted features: URL length, entropy, subdomain count, suspicious keywords,
+            IP detection, and more. Schemes are stripped before computing to match training data.
+          </div>
+        </div>
+        <div class="how-card">
+          <div class="how-card-icon">🌲</div>
+          <div class="how-card-title">Random Forest Model</div>
+          <div class="how-card-desc">
+            Trained on 549K+ real phishing and legitimate URLs. GridSearchCV-tuned hyperparameters,
+            threshold optimised on the Precision-Recall curve for minimum false positives.
+          </div>
+        </div>
+        <div class="how-card">
+          <div class="how-card-icon">🏛️</div>
+          <div class="how-card-title">Hybrid Domain Awareness</div>
+          <div class="how-card-desc">
+            Known-trusted domains (Google, GitHub, etc.) get a whitelist pass, preventing
+            false positives on well-known sites even if URL features look suspicious.
+          </div>
+        </div>
+        <div class="how-card">
+          <div class="how-card-icon">🔬</div>
+          <div class="how-card-title">Explainable AI</div>
+          <div class="how-card-desc">
+            Every prediction shows the top 5 features driving the decision —
+            so you understand <em>why</em> a URL is flagged, not just that it is.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <footer>
+    <span>🛡️ PhishGuard AI — Production Phishing Detection System</span>
+    <span>Model: Random Forest v3 · 549K URLs · 19 Features</span>
+  </footer>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script>
+  const API_BASE = 'http://127.0.0.1:8000';
+  const DEFAULT_RISK_BANDS = {
+    legitimate_max_probability: 0.4,
+    phishing_min_probability: 0.75,
+    adaptive_heuristic_trigger: 0.4,
+    adaptive_phishing_min_probability: 0.6,
+    hard_rule_phishing_probability: 0.9,
+  };
+  const RISKY_TLDS = new Set([
+    '.biz', '.click', '.country', '.gq', '.info', '.link', '.live', '.loan',
+    '.ml', '.monster', '.online', '.ru', '.support', '.tk', '.top', '.work', '.xyz'
+  ]);
+
+  let history = [];
+  let currentResult = null;
+  let actionStatusTimer = null;
+
+  /* ── URL helpers ─────────────────────────────────────────────── */
+  function fillUrl(url) {
+    document.getElementById('urlInput').value = url;
+    document.getElementById('urlInput').focus();
+  }
+
+  document.getElementById('urlInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') analyseURL();
+  });
+
+  /* ── Classify risk level ─────────────────────────────────────── */
+  function riskClass(result) {
+    const band = typeof result === 'string' ? result : result.risk_band;
+    if (band === 'phishing') return 'danger';
+    if (band === 'suspicious') return 'medium';
+    return 'safe';
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function finiteNumber(value, fallback = 0) {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+  }
+
+  function clamp(value, min = 0, max = 1) {
+    return Math.min(max, Math.max(min, finiteNumber(value, min)));
+  }
+
+  function normalizeUrl(url) {
+    if (!url) return '';
+    return /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(url) ? url : `http://${url}`;
+  }
+
+  function parseUrlSafe(url) {
+    try {
+      return new URL(normalizeUrl(url));
+    } catch {
+      return null;
+    }
+  }
+
+  function titleCase(value) {
+    return String(value ?? '')
+      .replace(/[_-]+/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(' ');
+  }
+
+  function rootDomain(hostname) {
+    const clean = String(hostname ?? '').toLowerCase().replace(/^www\./, '');
+    const parts = clean.split('.').filter(Boolean);
+    return parts.length >= 2 ? parts.slice(-2).join('.') : clean || 'Unknown';
+  }
+
+  function formatRiskBand(band) {
+    const normalized = String(band ?? '').toLowerCase();
+    if (normalized === 'phishing') return 'Phishing';
+    if (normalized === 'suspicious') return 'Suspicious';
+    return 'Legitimate';
+  }
+
+  function formatRiskLevel(level) {
+    return titleCase(level || 'unknown');
+  }
+
+  function formatModelName(name) {
+    const normalized = String(name ?? '').toLowerCase();
+    if (normalized === 'random_forest_calibrated') return 'Random Forest (Calibrated)';
+    if (normalized === 'random_forest') return 'Random Forest';
+    if (normalized === 'logistic_regression') return 'Logistic Regression';
+    if (normalized === 'xgboost') return 'XGBoost';
+    return titleCase(name || 'Unknown');
+  }
+
+  function confidenceBucket(confidenceScore) {
+    const score = clamp(confidenceScore);
+    if (score < 0.35) return 'low';
+    if (score < 0.75) return 'medium';
+    return 'high';
+  }
+
+  function deriveRiskBand(raw) {
+    const explicit = String(raw.risk_band ?? '').toLowerCase();
+    if (explicit) return explicit;
+
+    const prediction = String(raw.prediction ?? '').toLowerCase();
+    if (prediction.includes('phishing') || prediction.includes('malicious')) return 'phishing';
+    if (prediction.includes('suspicious')) return 'suspicious';
+    if (prediction.includes('legitimate') || prediction.includes('safe')) return 'legitimate';
+
+    const score = finiteNumber(raw.risk_score, 0);
+    if (score >= 75) return 'phishing';
+    if (score >= 40) return 'suspicious';
+    return 'legitimate';
+  }
+
+  function deriveRiskLevel(raw, riskBand, riskScore) {
+    const explicit = String(raw.risk_level ?? '').toLowerCase();
+    if (explicit) return explicit;
+    if (riskBand === 'phishing') return riskScore >= 90 ? 'critical' : 'high';
+    if (riskBand === 'suspicious') return 'medium';
+    return 'low';
+  }
+
+  function normalizeFeatureContributions(raw) {
+    if (Array.isArray(raw.feature_contributions) && raw.feature_contributions.length) {
+      return raw.feature_contributions.map((entry) => ({
+        feature: String(entry.feature ?? 'Unknown feature'),
+        feature_value: finiteNumber(entry.feature_value ?? entry.value, 0),
+        contribution: finiteNumber(entry.contribution, 0),
+        description: String(entry.description ?? ''),
+      }));
+    }
+
+    if (Array.isArray(raw.top_reasons) && raw.top_reasons.length) {
+      return raw.top_reasons.map((entry) => ({
+        feature: String(entry.feature ?? 'Unknown feature'),
+        feature_value: finiteNumber(entry.feature_value ?? entry.value, 0),
+        contribution: finiteNumber(entry.contribution, 0),
+        description: String(entry.description ?? ''),
+      }));
+    }
+
+    return [];
+  }
+
+  function normalizeReasonDetails(raw) {
+    if (Array.isArray(raw.reason_details) && raw.reason_details.length) {
+      return raw.reason_details.map((entry) => ({
+        reason: String(entry.reason ?? 'Unknown signal'),
+        weight: finiteNumber(entry.weight, 0),
+        signal: String(entry.signal ?? 'risk').toLowerCase(),
+        description: String(entry.description ?? ''),
+      }));
+    }
+
+    if (Array.isArray(raw.top_reasons) && raw.top_reasons.length) {
+      return raw.top_reasons.map((entry) => ({
+        reason: titleCase(entry.feature ?? 'Model signal'),
+        weight: finiteNumber(entry.contribution, 0),
+        signal: 'risk',
+        description: String(entry.description ?? ''),
+      }));
+    }
+
+    if (Array.isArray(raw.reasons) && raw.reasons.length) {
+      return raw.reasons.map((entry) => ({
+        reason: String(entry).replace(/\s*\(\+.*\)\s*$/, ''),
+        weight: 0,
+        signal: 'risk',
+        description: '',
+      }));
+    }
+
+    return [];
+  }
+
+  function normalizeResultData(raw) {
+    const riskScore = finiteNumber(raw.risk_score, 0);
+    const numericProbability = Number(raw.probability);
+    const probability = Number.isFinite(numericProbability) ? clamp(numericProbability) : clamp(riskScore / 100);
+
+    const rawConfidenceScore = Number(raw.confidence_score);
+    const legacyConfidence = typeof raw.confidence === 'number' ? Number(raw.confidence) : NaN;
+    const derivedConfidenceScore = Math.abs(probability - 0.5) * 2;
+    const confidenceScore = clamp(
+      Number.isFinite(rawConfidenceScore)
+        ? rawConfidenceScore
+        : (Number.isFinite(legacyConfidence) ? legacyConfidence : derivedConfidenceScore)
+    );
+
+    const riskBand = deriveRiskBand(raw);
+    const riskLevel = deriveRiskLevel(raw, riskBand, riskScore);
+    const riskBands = raw.risk_bands && typeof raw.risk_bands === 'object'
+      ? { ...DEFAULT_RISK_BANDS, ...raw.risk_bands }
+      : { ...DEFAULT_RISK_BANDS };
+    const extractedFeatures = raw.extracted_features && typeof raw.extracted_features === 'object'
+      ? raw.extracted_features
+      : {};
+
+    return {
+      ...raw,
+      url: String(raw.url ?? ''),
+      prediction: String(raw.prediction ?? riskBand),
+      risk_score: riskScore,
+      risk_band: riskBand,
+      risk_level: riskLevel,
+      confidence: typeof raw.confidence === 'string' ? raw.confidence.toLowerCase() : confidenceBucket(confidenceScore),
+      confidence_score: confidenceScore,
+      probability,
+      base_model_probability: finiteNumber(raw.base_model_probability, probability),
+      heuristic_probability: finiteNumber(raw.heuristic_probability, probability),
+      hard_rule_phishing: Boolean(raw.hard_rule_phishing),
+      risk_score_sigmoid: finiteNumber(raw.risk_score_sigmoid, riskScore),
+      model_threshold: finiteNumber(raw.model_threshold ?? raw.threshold, riskBands.phishing_min_probability),
+      effective_phishing_min_probability: finiteNumber(
+        raw.effective_phishing_min_probability,
+        riskBands.adaptive_phishing_min_probability
+      ),
+      risk_bands: riskBands,
+      dual_threshold_score: finiteNumber(raw.dual_threshold_score, probability),
+      dual_threshold_label: String(raw.dual_threshold_label ?? raw.prediction ?? riskBand),
+      dual_threshold_confidence: String(raw.dual_threshold_confidence ?? raw.confidence ?? confidenceBucket(confidenceScore)),
+      top_risk_factors: Array.isArray(raw.top_risk_factors) ? raw.top_risk_factors : [],
+      feature_contributions: normalizeFeatureContributions(raw),
+      extracted_features: extractedFeatures,
+      model_name: String(raw.model_name ?? raw.model_version ?? 'random_forest_calibrated'),
+      processing_time_ms: Number.isFinite(Number(raw.processing_time_ms)) ? Number(raw.processing_time_ms) : null,
+      warning: String(raw.warning ?? ''),
+      reason_details: normalizeReasonDetails(raw)
+        .sort((left, right) => right.weight - left.weight)
+        .slice(0, 6),
+      reasons: Array.isArray(raw.reasons)
+        ? raw.reasons.map((reason) => String(reason))
+        : [],
+      is_ip_url: raw.is_ip_url ?? Boolean(finiteNumber(extractedFeatures.has_ip_address, 0)),
+      is_short_url: raw.is_short_url ?? Boolean(finiteNumber(extractedFeatures.has_shortener, 0)),
+      is_trusted: Boolean(raw.is_trusted),
+    };
+  }
+
+  function formatPercent(value) {
+    return `${(clamp(value) * 100).toFixed(1)}%`;
+  }
+
+  function formatScoreOutOf100(value) {
+    return `${Math.round(finiteNumber(value, 0))}/100`;
+  }
+
+  function formatConfidence(result) {
+    return `${titleCase(result.confidence)} (${(clamp(result.confidence_score) * 100).toFixed(1)}%)`;
+  }
+
+  function chip(cls, label, text) {
+    return `<div class="chip ${cls}">${escapeHtml(label)} ${escapeHtml(text)}</div>`;
+  }
+
+  function reasonIcon(detail) {
+    const reason = String(detail.reason ?? '').toLowerCase();
+    if (detail.signal === 'rule') return '🧩';
+    if (reason.includes('brand')) return '🧾';
+    if (reason.includes('domain') || reason.includes('tld')) return '🌐';
+    if (reason.includes('ip')) return '🖥️';
+    if (reason.includes('login') || reason.includes('verify') || reason.includes('keyword')) return '⚠️';
+    if (reason.includes('https') || reason.includes('ssl')) return '🔒';
+    if (reason.includes('subdomain')) return '🕸️';
+    return '⚠️';
+  }
+
+  function reasonNarrative(detail) {
+    if (detail.description) return detail.description;
+
+    const reason = String(detail.reason ?? '').toLowerCase();
+    if (detail.signal === 'rule') {
+      return 'A hard rule matched a high-confidence phishing pattern and pushed the URL into the highest-risk workflow.';
+    }
+    if (reason.includes('brand impersonation')) {
+      return 'The domain appears to mimic a trusted brand, which is a common tactic for credential theft and payment fraud.';
+    }
+    if (reason.includes('login') || reason.includes('verify')) {
+      return 'Credential-bait keywords are frequently used on phishing pages to pressure people into signing in.';
+    }
+    if (reason.includes('ip address')) {
+      return 'Raw IP addresses bypass normal domain reputation cues and are often used in low-trust phishing infrastructure.';
+    }
+    if (reason.includes('suspicious domain')) {
+      return 'The hostname or TLD pattern looks similar to domains commonly used for phishing or throwaway campaigns.';
+    }
+    if (reason.includes('subdomain')) {
+      return 'Deep subdomain nesting can obscure the real destination and make a fake site appear trustworthy.';
+    }
+    if (reason.includes('https')) {
+      return 'Transport security is weak or intentionally misleading, which lowers trust in the destination.';
+    }
+    return 'This signal increased the phishing score inside the hybrid risk engine.';
+  }
+
+  function buildReasonItems(result) {
+    if (result.reason_details.length) {
+      return result.reason_details.map((detail) => ({
+        icon: reasonIcon(detail),
+        title: detail.reason,
+        description: reasonNarrative(detail),
+        weight: detail.weight,
+        badges: [detail.signal === 'rule' ? 'Hard Rule' : 'Risk Signal'],
+        badgeClass: detail.signal === 'rule' ? 'rule' : 'risk',
+      }));
+    }
+
+    return result.feature_contributions.map((detail) => ({
+      icon: '🧠',
+      title: titleCase(detail.feature),
+      description: detail.description || 'A strong model feature contributed to the final phishing score.',
+      weight: detail.contribution,
+      badges: [`Value ${detail.feature_value}`],
+      badgeClass: 'risk',
+    }));
+  }
+
+  function buildWhyMatters(result, reasonItems) {
+    const topReasons = reasonItems
+      .filter((item) => item.weight > 0)
+      .slice(0, 2)
+      .map((item) => item.title.toLowerCase());
+
+    if (!topReasons.length) {
+      return 'This result comes from the blended machine-learning and heuristic engine. The URL currently shows only weak phishing indicators.';
+    }
+
+    const joinedReasons = topReasons.length === 1
+      ? topReasons[0]
+      : `${topReasons[0]} and ${topReasons[1]}`;
+
+    if (result.hard_rule_phishing) {
+      return `This URL was escalated because it shows ${joinedReasons}, and a hard phishing rule also fired. That combination is strongly associated with live phishing campaigns.`;
+    }
+
+    if (result.risk_band === 'phishing') {
+      return `This URL was flagged because it shows ${joinedReasons}. Those patterns are heavily associated with credential theft, impersonation, and malicious redirect infrastructure.`;
+    }
+
+    if (result.risk_band === 'suspicious') {
+      return `This URL looks risky because it shows ${joinedReasons}. It may not be confirmed phishing, but it matches several warning signs seen in suspicious campaigns.`;
+    }
+
+    return `This URL currently looks legitimate because the strongest signals were weak, and the final score stayed below the suspicious threshold despite checks for ${joinedReasons}.`;
+  }
+
+  function buildDomainFacts(result) {
+    const parsed = parseUrlSafe(result.url);
+    const hostname = parsed ? parsed.hostname : 'Unknown';
+    const registrableDomain = hostname !== 'Unknown' ? rootDomain(hostname) : 'Unknown';
+    const tld = hostname && hostname.includes('.') ? `.${hostname.split('.').pop().toLowerCase()}` : 'Unknown';
+    const usesHttps = parsed ? parsed.protocol === 'https:' : Boolean(finiteNumber(result.extracted_features.uses_https, 0));
+    const tldRisk = tld !== 'Unknown' && RISKY_TLDS.has(tld) ? `High (${tld})` : (tld === 'Unknown' ? 'Unknown' : `Normal (${tld})`);
+
+    return [
+      { label: 'Domain', value: hostname || 'Unknown' },
+      { label: 'Root Domain', value: registrableDomain || 'Unknown' },
+      { label: 'TLD Risk', value: tldRisk },
+      { label: 'SSL', value: usesHttps ? 'Present' : 'Missing' },
+      { label: 'IP Address', value: result.is_ip_url ? 'Yes' : 'No' },
+      { label: 'Domain Age', value: 'Unknown' },
+    ];
+  }
+
+  function buildTimelineSteps(result) {
+    const steps = [
+      {
+        title: 'Base ML Score',
+        description: 'The calibrated model score before keyword, domain, and hard-rule logic are blended in.',
+        score: result.base_model_probability,
+      },
+      {
+        title: 'Heuristic Signals',
+        description: `URL-specific rules raised the phishing pressure to ${formatPercent(result.heuristic_probability)} before the final blend.`,
+        score: result.heuristic_probability,
+      },
+    ];
+
+    if (result.hard_rule_phishing) {
+      steps.push({
+        title: 'Hard Rule Override',
+        description: 'A high-confidence phishing rule triggered and forced the score into the phishing band.',
+        score: result.risk_bands.hard_rule_phishing_probability || 0.9,
+      });
+    }
+
+    steps.push({
+      title: 'Final Hybrid Decision',
+      description: `${formatRiskBand(result.risk_band)} with ${formatRiskLevel(result.risk_level)} threat level after the full hybrid pipeline.`,
+      score: result.probability,
+    });
+
+    return steps;
+  }
+
+  function truncateText(value, maxLength) {
+    const text = String(value ?? '');
+    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  }
+
+  /* ── Analyse URL ─────────────────────────────────────────────── */
+  async function analyseURL() {
+    const url = document.getElementById('urlInput').value.trim();
+    if (!url) {
+      showError('Please enter a URL to analyse.');
+      return;
+    }
+
+    setLoading(true);
+    hideError();
+    clearActionStatus();
+    document.getElementById('resultSection').classList.remove('visible');
+
+    try {
+      const resp = await fetch(`${API_BASE}/predict`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        throw new Error(err.detail || `HTTP ${resp.status}`);
+      }
+
+      const data = normalizeResultData(await resp.json());
+      renderResult(data);
+      addToHistory(data);
+
+    } catch (err) {
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        showError(
+          '⚠️ Cannot reach the API at ' + API_BASE + '.<br>' +
+          'Start the backend with: <code>uvicorn backend.app:app --reload --port 8000</code><br>' +
+          '<br><em>Showing a demo result instead…</em>'
+        );
+        // Show demo result when API is unreachable
+        const demo = normalizeResultData(makeDemoResult(url));
+        renderResult(demo);
+        addToHistory(demo);
+      } else {
+        showError('Analysis failed: ' + err.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /* ── Demo result (offline mode) ──────────────────────────────── */
+  function makeDemoResult(url) {
+    const urlLower = url.toLowerCase();
+    const isIp = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(urlLower);
+    const isShort = urlLower.includes('tinyurl') || urlLower.includes('bit.ly');
+    const isSuspicious =
+      urlLower.includes('login') || urlLower.includes('verify') ||
+      urlLower.includes('paypal') || urlLower.includes('secure') ||
+      isIp;
+
+    const probability = isSuspicious ? 0.9 : 0.07;
+    const parsed = parseUrlSafe(url);
+    const hostname = parsed ? parsed.hostname : String(url).replace(/^https?:\/\//, '');
+
+    return {
+      url,
+      prediction: isSuspicious ? 'phishing' : 'legitimate',
+      risk_score: probability * 100,
+      confidence: 'high',
+      confidence_score: isSuspicious ? 0.85 : 0.86,
+      probability,
+      base_model_probability: isSuspicious ? 0.74 : 0.08,
+      heuristic_probability: isSuspicious ? 0.82 : 0.12,
+      hard_rule_phishing: hostname.includes('paypal') && !hostname.endsWith('paypal.com'),
+      risk_band: isSuspicious ? 'phishing' : 'legitimate',
+      risk_level: isSuspicious ? 'high' : 'low',
+      is_trusted: !isSuspicious && (url.includes('google') || url.includes('github')),
+      is_short_url: isShort,
+      is_ip_url: isIp,
+      warning: '[DEMO MODE — API offline] Prediction is illustrative.',
+      threshold: 0.482,
+      model_version: 'v3-demo',
+      top_reasons: [
+        { feature: 'url_entropy',          value: 3.8, contribution: 0.012, description: 'High character randomness — typical of machine-generated phishing domains' },
+        { feature: 'url_length',           value: url.length, contribution: 0.009, description: 'Long URL — hides real domain behind padding' },
+        { feature: 'num_special_chars',    value: 8,   contribution: 0.007, description: 'Many special characters — obfuscates URL structure' },
+        { feature: 'has_suspicious_word',  value: isSuspicious ? 1 : 0, contribution: 0.006, description: 'Contains phishing keyword (login/verify/bank/account…)' },
+        { feature: 'num_dots',             value: 3,   contribution: 0.004, description: 'Many dots — fake subdomains (e.g. paypal.secure.xyz.com)' },
+      ],
+    };
+  }
+
+  /* ── Render result card ──────────────────────────────────────── */
+  function renderResult(d) {
+    const cls = riskClass(d.risk_level);
+
+    // Header
+    const header = document.getElementById('resultHeader');
+    header.className = 'result-header ' + cls;
+
+    // Icon & label
+    const icons = { safe: '✅', medium: '⚠️', danger: '🚨' };
+    document.getElementById('verdictIcon').className = 'verdict-icon ' + cls;
+    document.getElementById('verdictIcon').textContent = icons[cls];
+    document.getElementById('verdictLabel').className = 'verdict-label ' + cls;
+    document.getElementById('verdictLabel').textContent =
+      d.prediction === 'Safe' ? 'Safe URL' :
+      d.prediction === 'Malicious' ? 'Phishing / Malicious' : 'Analysis Error';
+
+    const maxUrl = 80;
+    document.getElementById('verdictUrl').textContent =
+      d.url.length > maxUrl ? d.url.slice(0, maxUrl) + '…' : d.url;
+
+    // Risk circle
+    const circle = document.getElementById('riskCircle');
+    circle.className = 'risk-circle ' + cls;
+    document.getElementById('riskValue').textContent =
+      d.risk_score >= 0 ? Math.round(d.risk_score) : '?';
+
+    // Chips
+    const chipRow = document.getElementById('chipRow');
+    chipRow.innerHTML = '';
+    if (d.is_trusted)  chipRow.innerHTML += chip('trusted', '🏛️', 'Trusted Domain');
+    if (d.is_short_url) chipRow.innerHTML += chip('short', '🔗', 'Short URL');
+    if (d.is_ip_url)   chipRow.innerHTML += chip('ip', '🖥️', 'IP Address URL');
+    chipRow.innerHTML += chip('info', '🎯', `Threshold: ${d.threshold}`);
+    chipRow.innerHTML += chip('info', '🤖', `Model: ${d.model_version}`);
+    if (d.processing_time_ms) {
+      chipRow.innerHTML += chip('info', '⚡', `${d.processing_time_ms}ms`);
+    }
+
+    // Max contribution for bar scaling
+    const maxContrib = Math.max(...(d.top_reasons || []).map(r => r.contribution), 0.001);
+
+    // Reasons
+    const list = document.getElementById('reasonsList');
+    list.innerHTML = '';
+    (d.top_reasons || []).forEach(r => {
+      const pct = Math.min(100, (r.contribution / maxContrib) * 100);
+      const item = document.createElement('div');
+      item.className = 'reason-item';
+      item.innerHTML = `
+        <div class="reason-bar-track">
+          <div class="reason-bar-fill" style="width: ${pct}%"></div>
+        </div>
+        <div class="reason-info">
+          <div class="reason-name">${r.feature}</div>
+          <div class="reason-desc">${r.description}</div>
+        </div>
+        <div class="reason-val">${r.value.toFixed ? r.value.toFixed(2) : r.value}</div>
+      `;
+      list.appendChild(item);
+    });
+
+    // Warning
+    const warnEl = document.getElementById('resultWarning');
+    if (d.warning) {
+      warnEl.textContent = d.warning;
+      warnEl.style.display = 'block';
+    } else {
+      warnEl.style.display = 'none';
+    }
+
+    // Meta
+    document.getElementById('resultMeta').innerHTML = `
+      <span>Confidence: <span class="meta-tag">${(d.confidence * 100).toFixed(1)}%</span></span>
+      <span>Risk Level: <span class="meta-tag">${d.risk_level}</span></span>
+      <span>Threshold: <span class="meta-tag">${d.threshold}</span></span>
+    `;
+
+    document.getElementById('resultSection').classList.add('visible');
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function chip(cls, icon, text) {
+    return `<div class="chip ${cls}">${icon} ${text}</div>`;
+  }
+
+  /* ── History ─────────────────────────────────────────────────── */
+  function addToHistory(d) {
+    history = [d, ...history.filter(h => h.url !== d.url)].slice(0, 15);
+    localStorage.setItem('phishguard_history', JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const section = document.getElementById('historySection');
+    const list = document.getElementById('historyList');
+    if (!history.length) { section.classList.remove('visible'); return; }
+    section.classList.add('visible');
+    list.innerHTML = history.map((h, i) => {
+      const cls = riskClass(h.risk_level);
+      const short = h.url.length > 60 ? h.url.slice(0, 60) + '…' : h.url;
+      return `
+        <div class="history-item" onclick="reloadHistory(${i})">
+          <div class="history-dot ${cls}"></div>
+          <div class="history-url">${short}</div>
+          <div class="history-score">${Math.round(h.risk_score >= 0 ? h.risk_score : 0)}%</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function reloadHistory(i) {
+    const d = history[i];
+    document.getElementById('urlInput').value = d.url;
+    renderResult(d);
+  }
+
+  function clearHistory() {
+    history = [];
+    localStorage.removeItem('phishguard_history');
+    document.getElementById('historySection').classList.remove('visible');
+  }
+
+  /* ── UI helpers ──────────────────────────────────────────────── */
+  function setLoading(on) {
+    document.getElementById('loader').classList.toggle('active', on);
+    document.getElementById('analyseBtn').disabled = on;
+    document.getElementById('analyseBtn').textContent = on ? 'Analysing…' : 'Analyse →';
+  }
+
+  function showError(msg) {
+    const b = document.getElementById('errorBanner');
+    document.getElementById('errorText').innerHTML = msg;
+    b.classList.add('visible');
+  }
+
+  function hideError() {
+    document.getElementById('errorBanner').classList.remove('visible');
+  }
+
+  /* ── Init ────────────────────────────────────────────────────── */
+  function renderResult(rawResult) {
+    const result = normalizeResultData(rawResult);
+    const cls = riskClass(result);
+    const reasonItems = buildReasonItems(result);
+
+    currentResult = result;
+    clearActionStatus();
+
+    const header = document.getElementById('resultHeader');
+    header.className = `result-header ${cls}`;
+
+    const icons = { safe: '✅', medium: '⚠️', danger: '🚨' };
+    document.getElementById('verdictIcon').className = `verdict-icon ${cls}`;
+    document.getElementById('verdictIcon').textContent = icons[cls];
+    document.getElementById('verdictLabel').className = `verdict-label ${cls}`;
+    document.getElementById('verdictLabel').textContent =
+      result.warning.includes('[DEMO MODE') ? 'Demo Analysis' : 'Analysis Complete';
+    document.getElementById('verdictStatus').textContent =
+      `${formatRiskBand(result.risk_band)} | ${formatRiskLevel(result.risk_level)} Threat | ${formatScoreOutOf100(result.risk_score)}`;
+    document.getElementById('verdictUrl').textContent = truncateText(result.url, 96);
+
+    const circle = document.getElementById('riskCircle');
+    circle.className = `risk-circle ${cls}`;
+    document.getElementById('riskValue').textContent = Math.round(result.risk_score);
+
+    const chips = [
+      chip('info', 'Score', formatPercent(result.probability)),
+      chip('info', 'Adaptive', `${(result.effective_phishing_min_probability * 100).toFixed(0)}% phishing threshold`),
+      chip('info', 'SSL', finiteNumber(result.extracted_features.uses_https, 0) ? 'HTTPS present' : 'HTTPS missing'),
+    ];
+    if (result.is_short_url) chips.push(chip('short', 'Signal', 'Short URL detected'));
+    if (result.is_ip_url) chips.push(chip('ip', 'Signal', 'IP address URL'));
+    if (result.hard_rule_phishing) chips.push(chip('ip', 'Rule', 'Hard rule triggered'));
+    if (result.processing_time_ms !== null) chips.push(chip('info', 'API', `${result.processing_time_ms.toFixed(1)} ms`));
+    document.getElementById('chipRow').innerHTML = chips.join('');
+
+    document.getElementById('summaryGrid').innerHTML = [
+      {
+        label: 'Risk Band',
+        value: formatRiskBand(result.risk_band),
+        note: 'Green = legitimate, yellow = suspicious, red = phishing.',
+      },
+      {
+        label: 'Threat Level',
+        value: formatRiskLevel(result.risk_level),
+        note: 'Severity label for the final hybrid decision.',
+      },
+      {
+        label: 'Confidence',
+        value: formatConfidence(result),
+        note: 'How certain the system is about this verdict.',
+      },
+      {
+        label: 'Model',
+        value: formatModelName(result.model_name),
+        note: `Model threshold ${(result.model_threshold * 100).toFixed(1)}%.`,
+      },
+    ].map((card) => `
+      <div class="summary-card ${cls}">
+        <div class="summary-label">${escapeHtml(card.label)}</div>
+        <div class="summary-value">${escapeHtml(card.value)}</div>
+        <div class="summary-note">${escapeHtml(card.note)}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('whyMatters').textContent = buildWhyMatters(result, reasonItems);
+
+    document.getElementById('domainGrid').innerHTML = buildDomainFacts(result).map((item) => `
+      <div class="domain-item">
+        <div class="domain-label">${escapeHtml(item.label)}</div>
+        <div class="domain-value">${escapeHtml(item.value)}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('timelineKicker').textContent =
+      `Bands <40% / >=40% / >=75% | adaptive ${Math.round(result.effective_phishing_min_probability * 100)}%`;
+    document.getElementById('timelineList').innerHTML = buildTimelineSteps(result).map((step, index) => `
+      <div class="timeline-step">
+        <div class="timeline-dot">${index + 1}</div>
+        <div class="timeline-main">
+          <div class="timeline-title">${escapeHtml(step.title)}</div>
+          <div class="timeline-desc">${escapeHtml(step.description)}</div>
+        </div>
+        <div class="timeline-score">${escapeHtml(formatPercent(step.score))}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('reasonsKicker').textContent = reasonItems.length
+      ? `${reasonItems.length} strongest signals`
+      : 'No strong phishing indicators';
+    document.getElementById('reasonsList').innerHTML = reasonItems.length
+      ? reasonItems.map((item) => `
+          <div class="reason-item">
+            <div class="reason-icon">${item.icon}</div>
+            <div class="reason-content">
+              <div class="reason-topline">
+                <div class="reason-name">${escapeHtml(item.title)}</div>
+                <div class="reason-weight">+${finiteNumber(item.weight, 0).toFixed(2)}</div>
+              </div>
+              <div class="reason-desc">${escapeHtml(item.description)}</div>
+              <div class="reason-badges">
+                ${item.badges.map((badge) => `<span class="reason-badge ${item.badgeClass}">${escapeHtml(badge)}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        `).join('')
+      : `
+          <div class="reason-item">
+            <div class="reason-icon">✅</div>
+            <div class="reason-content">
+              <div class="reason-topline">
+                <div class="reason-name">No high-impact phishing signals</div>
+                <div class="reason-weight">+0.00</div>
+              </div>
+              <div class="reason-desc">The model did not find strong URL patterns that pushed this link into the suspicious or phishing bands.</div>
+            </div>
+          </div>
+        `;
+
+    const warningEl = document.getElementById('resultWarning');
+    if (result.warning) {
+      warningEl.textContent = result.warning;
+      warningEl.style.display = 'block';
+    } else {
+      warningEl.style.display = 'none';
+    }
+
+    document.getElementById('resultMeta').innerHTML = `
+      <span>Hybrid Score: <span class="meta-tag">${escapeHtml(formatPercent(result.probability))}</span></span>
+      <span>Base ML: <span class="meta-tag">${escapeHtml(formatPercent(result.base_model_probability))}</span></span>
+      <span>Heuristics: <span class="meta-tag">${escapeHtml(formatPercent(result.heuristic_probability))}</span></span>
+      <span>Threat Level: <span class="meta-tag">${escapeHtml(formatRiskLevel(result.risk_level))}</span></span>
+    `;
+
+    document.getElementById('resultSection').classList.add('visible');
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function addToHistory(result) {
+    history = [result, ...history.filter((entry) => entry.url !== result.url)].slice(0, 15);
+    localStorage.setItem('phishguard_history', JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const section = document.getElementById('historySection');
+    const list = document.getElementById('historyList');
+
+    if (!history.length) {
+      section.classList.remove('visible');
+      list.innerHTML = '';
+      return;
+    }
+
+    section.classList.add('visible');
+    list.innerHTML = history.map((entry, index) => {
+      const result = normalizeResultData(entry);
+      const cls = riskClass(result);
+      return `
+        <div class="history-item" onclick="reloadHistory(${index})">
+          <div class="history-dot ${cls}"></div>
+          <div class="history-url">${escapeHtml(truncateText(result.url, 64))}</div>
+          <div class="history-score">${escapeHtml(formatRiskBand(result.risk_band))} | ${Math.round(result.risk_score)}%</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function reloadHistory(index) {
+    const result = normalizeResultData(history[index]);
+    document.getElementById('urlInput').value = result.url;
+    renderResult(result);
+  }
+
+  function clearHistory() {
+    history = [];
+    localStorage.removeItem('phishguard_history');
+    document.getElementById('historySection').classList.remove('visible');
+    document.getElementById('historyList').innerHTML = '';
+  }
+
+  function setLoading(on) {
+    document.getElementById('loader').classList.toggle('active', on);
+    document.getElementById('analyseBtn').disabled = on;
+    document.getElementById('analyseBtn').textContent = on ? 'Analysing...' : 'Analyse ->';
+  }
+
+  function setActionStatus(message) {
+    const status = document.getElementById('actionStatus');
+    status.textContent = message;
+    if (actionStatusTimer) clearTimeout(actionStatusTimer);
+    if (message) {
+      actionStatusTimer = setTimeout(() => {
+        status.textContent = '';
+      }, 2200);
+    }
+  }
+
+  function clearActionStatus() {
+    setActionStatus('');
+  }
+
+  async function copyTextToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.setAttribute('readonly', '');
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  }
+
+  function buildReportText(result) {
+    const items = buildReasonItems(result)
+      .slice(0, 4)
+      .map((item) => `- ${item.title} (+${finiteNumber(item.weight, 0).toFixed(2)})`)
+      .join('\n');
+
+    return [
+      'PhishGuard AI Report',
+      `URL: ${result.url}`,
+      `Status: ${formatRiskBand(result.risk_band)}`,
+      `Threat Level: ${formatRiskLevel(result.risk_level)}`,
+      `Risk Score: ${formatScoreOutOf100(result.risk_score)}`,
+      `Confidence: ${formatConfidence(result)}`,
+      `Model: ${formatModelName(result.model_name)}`,
+      `Why This Matters: ${buildWhyMatters(result, buildReasonItems(result))}`,
+      'Top Reasons:',
+      items || '- No high-impact phishing signals found.',
+    ].join('\n');
+  }
+
+  async function copyCurrentReport() {
+    if (!currentResult) return;
+    try {
+      await copyTextToClipboard(buildReportText(currentResult));
+      setActionStatus('Report copied.');
+    } catch {
+      setActionStatus('Copy failed.');
+    }
+  }
+
+  function exportCurrentJson() {
+    if (!currentResult) return;
+    const parsed = parseUrlSafe(currentResult.url);
+    const host = parsed ? parsed.hostname.replace(/[^\w.-]+/g, '_') : 'report';
+    const blob = new Blob([JSON.stringify(currentResult, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `phishguard-${host}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setActionStatus('JSON exported.');
+  }
+
+  try {
+    history = JSON.parse(localStorage.getItem('phishguard_history') || '[]').map(normalizeResultData);
+  } catch {
+    history = [];
+  }
+
+  renderHistory();
+</script>
+</body>
+</html>

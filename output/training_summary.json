@@ -1,0 +1,850 @@
+{
+  "dataset_path": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\data\\phishing_websites.csv",
+  "dataset_rows": 11055,
+  "class_distribution": {
+    "legitimate": 6157,
+    "phishing": 4898
+  },
+  "feature_count": 12,
+  "feature_names": [
+    "url_length",
+    "has_ip_address",
+    "uses_https",
+    "num_dots",
+    "suspicious_keywords",
+    "has_hyphen",
+    "subdomain_count",
+    "has_at_symbol",
+    "has_double_slash",
+    "has_shortener",
+    "has_port",
+    "contains_https_token"
+  ],
+  "missing_values_before_imputation": 0,
+  "selected_model": "random_forest_calibrated",
+  "selected_threshold": 0.867818,
+  "selected_metrics": {
+    "threshold": 0.867818,
+    "accuracy": 0.7671,
+    "precision": 0.9568,
+    "recall": 0.4969,
+    "f1_score": 0.6541,
+    "roc_auc": 0.9091,
+    "average_precision": 0.8834,
+    "false_positive_rate": 0.017872,
+    "false_positives": 22,
+    "false_negatives": 493,
+    "true_positives": 487,
+    "true_negatives": 1209,
+    "confusion_matrix": [
+      [
+        1209,
+        22
+      ],
+      [
+        493,
+        487
+      ]
+    ]
+  },
+  "full_system_evaluation": {
+    "status": "proxy_only",
+    "is_full_system_evaluation": false,
+    "evaluation_mode": "hybrid_proxy_diagnostic",
+    "evaluation_scope": "held_out_feature_rows",
+    "note": "The source dataset has engineered features, not raw URLs. True hybrid_system(url) holdout metrics require a labeled raw-URL test set; the proxy below is diagnostic only and excludes URL-only brand/TLD/login hard rules.",
+    "feature_proxy_evaluation": {
+      "risk_band_counts": {
+        "legitimate": 9,
+        "suspicious": 1376,
+        "phishing": 826
+      },
+      "average_hybrid_probability": 0.492842,
+      "average_heuristic_probability": 0.597381,
+      "adaptive_threshold_count": 2202,
+      "alert_metrics": {
+        "threshold": 0.4,
+        "accuracy": 0.4473,
+        "precision": 0.445,
+        "recall": 1.0,
+        "f1_score": 0.616,
+        "roc_auc": 0.9091,
+        "average_precision": 0.8834,
+        "false_positive_rate": 0.992689,
+        "false_positives": 1222,
+        "false_negatives": 0,
+        "true_positives": 980,
+        "true_negatives": 9,
+        "confusion_matrix": [
+          [
+            9,
+            1222
+          ],
+          [
+            0,
+            980
+          ]
+        ]
+      },
+      "phishing_metrics": {
+        "threshold": 0.75,
+        "accuracy": 0.8263,
+        "precision": 0.8608,
+        "recall": 0.7255,
+        "f1_score": 0.7874,
+        "roc_auc": 0.9091,
+        "average_precision": 0.8834,
+        "false_positive_rate": 0.09342,
+        "false_positives": 115,
+        "false_negatives": 269,
+        "true_positives": 711,
+        "true_negatives": 1116,
+        "confusion_matrix": [
+          [
+            1116,
+            115
+          ],
+          [
+            269,
+            711
+          ]
+        ]
+      }
+    }
+  },
+  "evaluation_modes": {
+    "ml_only": {
+      "status": "available",
+      "evaluation_mode": "ml_only_holdout",
+      "evaluation_scope": "held_out_feature_rows",
+      "metrics": {
+        "threshold": 0.867818,
+        "accuracy": 0.7671,
+        "precision": 0.9568,
+        "recall": 0.4969,
+        "f1_score": 0.6541,
+        "roc_auc": 0.9091,
+        "average_precision": 0.8834,
+        "false_positive_rate": 0.017872,
+        "false_positives": 22,
+        "false_negatives": 493,
+        "true_positives": 487,
+        "true_negatives": 1209,
+        "confusion_matrix": [
+          [
+            1209,
+            22
+          ],
+          [
+            493,
+            487
+          ]
+        ]
+      }
+    },
+    "hybrid": {
+      "status": "proxy_only",
+      "is_full_system_evaluation": false,
+      "evaluation_mode": "hybrid_proxy_diagnostic",
+      "evaluation_scope": "held_out_feature_rows",
+      "note": "The source dataset has engineered features, not raw URLs. True hybrid_system(url) holdout metrics require a labeled raw-URL test set; the proxy below is diagnostic only and excludes URL-only brand/TLD/login hard rules.",
+      "feature_proxy_evaluation": {
+        "risk_band_counts": {
+          "legitimate": 9,
+          "suspicious": 1376,
+          "phishing": 826
+        },
+        "average_hybrid_probability": 0.492842,
+        "average_heuristic_probability": 0.597381,
+        "adaptive_threshold_count": 2202,
+        "alert_metrics": {
+          "threshold": 0.4,
+          "accuracy": 0.4473,
+          "precision": 0.445,
+          "recall": 1.0,
+          "f1_score": 0.616,
+          "roc_auc": 0.9091,
+          "average_precision": 0.8834,
+          "false_positive_rate": 0.992689,
+          "false_positives": 1222,
+          "false_negatives": 0,
+          "true_positives": 980,
+          "true_negatives": 9,
+          "confusion_matrix": [
+            [
+              9,
+              1222
+            ],
+            [
+              0,
+              980
+            ]
+          ]
+        },
+        "phishing_metrics": {
+          "threshold": 0.75,
+          "accuracy": 0.8263,
+          "precision": 0.8608,
+          "recall": 0.7255,
+          "f1_score": 0.7874,
+          "roc_auc": 0.9091,
+          "average_precision": 0.8834,
+          "false_positive_rate": 0.09342,
+          "false_positives": 115,
+          "false_negatives": 269,
+          "true_positives": 711,
+          "true_negatives": 1116,
+          "confusion_matrix": [
+            [
+              1116,
+              115
+            ],
+            [
+              269,
+              711
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "comparison": [
+    {
+      "model_name": "random_forest",
+      "threshold": 0.8177581297249875,
+      "accuracy": 0.7734,
+      "precision": 0.9579,
+      "recall": 0.5112,
+      "f1_score": 0.6667,
+      "false_positives": 22,
+      "false_positive_rate": 0.017872,
+      "roc_auc": 0.91
+    },
+    {
+      "model_name": "random_forest_calibrated",
+      "threshold": 0.8678181602383427,
+      "accuracy": 0.7671,
+      "precision": 0.9568,
+      "recall": 0.4969,
+      "f1_score": 0.6541,
+      "false_positives": 22,
+      "false_positive_rate": 0.017872,
+      "roc_auc": 0.9091
+    },
+    {
+      "model_name": "xgboost",
+      "threshold": 0.8265315890312195,
+      "accuracy": 0.7806,
+      "precision": 0.9492,
+      "recall": 0.5337,
+      "f1_score": 0.6832,
+      "false_positives": 28,
+      "false_positive_rate": 0.022746,
+      "roc_auc": 0.9082
+    },
+    {
+      "model_name": "logistic_regression",
+      "threshold": 0.9074633779322802,
+      "accuracy": 0.6866,
+      "precision": 0.9208,
+      "recall": 0.3204,
+      "f1_score": 0.4754,
+      "false_positives": 27,
+      "false_positive_rate": 0.021933,
+      "roc_auc": 0.8951
+    }
+  ],
+  "models": {
+    "logistic_regression": {
+      "model_name": "logistic_regression",
+      "threshold": 0.907463,
+      "metrics": {
+        "threshold": 0.907463,
+        "accuracy": 0.6866,
+        "precision": 0.9208,
+        "recall": 0.3204,
+        "f1_score": 0.4754,
+        "roc_auc": 0.8951,
+        "average_precision": 0.8678,
+        "false_positive_rate": 0.021933,
+        "false_positives": 27,
+        "false_negatives": 666,
+        "true_positives": 314,
+        "true_negatives": 1204,
+        "confusion_matrix": [
+          [
+            1204,
+            27
+          ],
+          [
+            666,
+            314
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\logistic_regression_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\logistic_regression_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\logistic_regression_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\logistic_regression_roc_thresholds.csv"
+      }
+    },
+    "random_forest": {
+      "model_name": "random_forest",
+      "threshold": 0.817758,
+      "metrics": {
+        "threshold": 0.817758,
+        "accuracy": 0.7734,
+        "precision": 0.9579,
+        "recall": 0.5112,
+        "f1_score": 0.6667,
+        "roc_auc": 0.91,
+        "average_precision": 0.8857,
+        "false_positive_rate": 0.017872,
+        "false_positives": 22,
+        "false_negatives": 479,
+        "true_positives": 501,
+        "true_negatives": 1209,
+        "confusion_matrix": [
+          [
+            1209,
+            22
+          ],
+          [
+            479,
+            501
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_roc_thresholds.csv"
+      }
+    },
+    "xgboost": {
+      "model_name": "xgboost",
+      "threshold": 0.826532,
+      "metrics": {
+        "threshold": 0.826532,
+        "accuracy": 0.7806,
+        "precision": 0.9492,
+        "recall": 0.5337,
+        "f1_score": 0.6832,
+        "roc_auc": 0.9082,
+        "average_precision": 0.8871,
+        "false_positive_rate": 0.022746,
+        "false_positives": 28,
+        "false_negatives": 457,
+        "true_positives": 523,
+        "true_negatives": 1203,
+        "confusion_matrix": [
+          [
+            1203,
+            28
+          ],
+          [
+            457,
+            523
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\xgboost_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\xgboost_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\xgboost_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\xgboost_roc_thresholds.csv"
+      }
+    },
+    "random_forest_calibrated": {
+      "model_name": "random_forest_calibrated",
+      "threshold": 0.867818,
+      "metrics": {
+        "threshold": 0.867818,
+        "accuracy": 0.7671,
+        "precision": 0.9568,
+        "recall": 0.4969,
+        "f1_score": 0.6541,
+        "roc_auc": 0.9091,
+        "average_precision": 0.8834,
+        "false_positive_rate": 0.017872,
+        "false_positives": 22,
+        "false_negatives": 493,
+        "true_positives": 487,
+        "true_negatives": 1209,
+        "confusion_matrix": [
+          [
+            1209,
+            22
+          ],
+          [
+            493,
+            487
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_calibrated_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_calibrated_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_calibrated_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_calibrated_roc_thresholds.csv",
+        "feature_importance": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_calibrated_feature_importance.png",
+        "shap_summary": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\random_forest_calibrated_shap_summary.png"
+      },
+      "full_system_evaluation": {
+        "status": "proxy_only",
+        "is_full_system_evaluation": false,
+        "evaluation_mode": "hybrid_proxy_diagnostic",
+        "evaluation_scope": "held_out_feature_rows",
+        "note": "The source dataset has engineered features, not raw URLs. True hybrid_system(url) holdout metrics require a labeled raw-URL test set; the proxy below is diagnostic only and excludes URL-only brand/TLD/login hard rules.",
+        "feature_proxy_evaluation": {
+          "risk_band_counts": {
+            "legitimate": 9,
+            "suspicious": 1376,
+            "phishing": 826
+          },
+          "average_hybrid_probability": 0.492842,
+          "average_heuristic_probability": 0.597381,
+          "adaptive_threshold_count": 2202,
+          "alert_metrics": {
+            "threshold": 0.4,
+            "accuracy": 0.4473,
+            "precision": 0.445,
+            "recall": 1.0,
+            "f1_score": 0.616,
+            "roc_auc": 0.9091,
+            "average_precision": 0.8834,
+            "false_positive_rate": 0.992689,
+            "false_positives": 1222,
+            "false_negatives": 0,
+            "true_positives": 980,
+            "true_negatives": 9,
+            "confusion_matrix": [
+              [
+                9,
+                1222
+              ],
+              [
+                0,
+                980
+              ]
+            ]
+          },
+          "phishing_metrics": {
+            "threshold": 0.75,
+            "accuracy": 0.8263,
+            "precision": 0.8608,
+            "recall": 0.7255,
+            "f1_score": 0.7874,
+            "roc_auc": 0.9091,
+            "average_precision": 0.8834,
+            "false_positive_rate": 0.09342,
+            "false_positives": 115,
+            "false_negatives": 269,
+            "true_positives": 711,
+            "true_negatives": 1116,
+            "confusion_matrix": [
+              [
+                1116,
+                115
+              ],
+              [
+                269,
+                711
+              ]
+            ]
+          }
+        }
+      }
+    }
+  },
+  "model_output_path": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output\\phishing_website_detector.joblib",
+  "artifacts_directory": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\output",
+  "xgboost_available": true,
+  "example_predictions": [
+    {
+      "prediction": "phishing",
+      "risk_score": 90.0,
+      "confidence": "high",
+      "confidence_score": 0.8,
+      "probability": 0.9,
+      "risk_score_sigmoid": 88.08,
+      "model_threshold": 0.867818,
+      "risk_bands": {
+        "legitimate_max_probability": 0.4,
+        "phishing_min_probability": 0.75,
+        "adaptive_heuristic_trigger": 0.4,
+        "adaptive_phishing_min_probability": 0.6,
+        "hybrid_ml_weight": 0.7,
+        "hybrid_heuristic_weight": 0.3,
+        "max_combo_heuristic_adjustment": 0.3,
+        "max_hybrid_probability": 0.95,
+        "hard_rule_phishing_probability": 0.9
+      },
+      "dual_threshold_score": 0.9,
+      "dual_threshold_label": "phishing",
+      "dual_threshold_confidence": "high",
+      "top_risk_factors": [
+        "has_double_slash",
+        "subdomain_count",
+        "num_dots"
+      ],
+      "feature_contributions": [
+        {
+          "feature": "has_double_slash",
+          "feature_value": 0.0,
+          "contribution": 0.083225,
+          "description": "Double slashes in the path can indicate redirect tricks."
+        },
+        {
+          "feature": "subdomain_count",
+          "feature_value": 1.0,
+          "contribution": 0.070583,
+          "description": "Too many subdomains can hide the true registrable domain."
+        },
+        {
+          "feature": "num_dots",
+          "feature_value": 2.0,
+          "contribution": 0.060366,
+          "description": "Many dots often indicate deceptive nesting and fake subdomains."
+        }
+      ],
+      "extracted_features": {
+        "url_length": 69.0,
+        "has_ip_address": 0.0,
+        "uses_https": 1.0,
+        "num_dots": 2.0,
+        "suspicious_keywords": 1.0,
+        "has_hyphen": 1.0,
+        "subdomain_count": 1.0,
+        "has_at_symbol": 0.0,
+        "has_double_slash": 0.0,
+        "has_shortener": 0.0,
+        "has_port": 0.0,
+        "contains_https_token": 0.0
+      },
+      "model_name": "random_forest_calibrated",
+      "url": "https://secure-paypal-login.verify-account-update.xyz/session/confirm",
+      "risk_band": "phishing",
+      "base_model_probability": 0.313958,
+      "heuristic_probability": 0.6,
+      "risk_level": "high",
+      "effective_phishing_min_probability": 0.6,
+      "hard_rule_phishing": true,
+      "reasons": [
+        "long URL (+0.10)",
+        "hyphenated domain (+0.08)",
+        "many subdomains (+0.08)",
+        "login keyword (+0.12)",
+        "verify keyword (+0.12)",
+        "suspicious domain (+0.15)",
+        "paypal brand impersonation (+0.40)",
+        "login and verify keyword combo (+0.25)",
+        "brand impersonation on suspicious domain (+0.05)",
+        "hard rule: paypal impersonation (+0.00)"
+      ],
+      "reason_details": [
+        {
+          "reason": "long URL",
+          "weight": 0.1,
+          "signal": "risk"
+        },
+        {
+          "reason": "hyphenated domain",
+          "weight": 0.08,
+          "signal": "risk"
+        },
+        {
+          "reason": "many subdomains",
+          "weight": 0.08,
+          "signal": "risk"
+        },
+        {
+          "reason": "login keyword",
+          "weight": 0.12,
+          "signal": "risk"
+        },
+        {
+          "reason": "verify keyword",
+          "weight": 0.12,
+          "signal": "risk"
+        },
+        {
+          "reason": "suspicious domain",
+          "weight": 0.15,
+          "signal": "risk"
+        },
+        {
+          "reason": "paypal brand impersonation",
+          "weight": 0.4,
+          "signal": "risk"
+        },
+        {
+          "reason": "login and verify keyword combo",
+          "weight": 0.25,
+          "signal": "risk"
+        },
+        {
+          "reason": "brand impersonation on suspicious domain",
+          "weight": 0.05,
+          "signal": "risk"
+        },
+        {
+          "reason": "hard rule: paypal impersonation",
+          "weight": 0.0,
+          "signal": "rule"
+        }
+      ]
+    },
+    {
+      "prediction": "legitimate",
+      "risk_score": 4.12,
+      "confidence": "high",
+      "confidence_score": 0.917506,
+      "probability": 0.041247,
+      "risk_score_sigmoid": 9.16,
+      "model_threshold": 0.867818,
+      "risk_bands": {
+        "legitimate_max_probability": 0.4,
+        "phishing_min_probability": 0.75,
+        "adaptive_heuristic_trigger": 0.4,
+        "adaptive_phishing_min_probability": 0.6,
+        "hybrid_ml_weight": 0.7,
+        "hybrid_heuristic_weight": 0.3,
+        "max_combo_heuristic_adjustment": 0.3,
+        "max_hybrid_probability": 0.95,
+        "hard_rule_phishing_probability": 0.9
+      },
+      "dual_threshold_score": 0.041247,
+      "dual_threshold_label": "legitimate",
+      "dual_threshold_confidence": "high",
+      "top_risk_factors": [
+        "num_dots",
+        "has_double_slash",
+        "url_length"
+      ],
+      "feature_contributions": [
+        {
+          "feature": "num_dots",
+          "feature_value": 2.0,
+          "contribution": 0.035713,
+          "description": "Many dots often indicate deceptive nesting and fake subdomains."
+        },
+        {
+          "feature": "has_double_slash",
+          "feature_value": 0.0,
+          "contribution": 0.034476,
+          "description": "Double slashes in the path can indicate redirect tricks."
+        },
+        {
+          "feature": "url_length",
+          "feature_value": 34.0,
+          "contribution": 0.003475,
+          "description": "Long URLs can hide malicious paths and confuse users."
+        }
+      ],
+      "extracted_features": {
+        "url_length": 34.0,
+        "has_ip_address": 0.0,
+        "uses_https": 1.0,
+        "num_dots": 2.0,
+        "suspicious_keywords": 0.0,
+        "has_hyphen": 0.0,
+        "subdomain_count": 0.0,
+        "has_at_symbol": 0.0,
+        "has_double_slash": 0.0,
+        "has_shortener": 0.0,
+        "has_port": 0.0,
+        "contains_https_token": 0.0
+      },
+      "model_name": "random_forest_calibrated",
+      "url": "https://www.microsoft.com/security",
+      "risk_band": "legitimate",
+      "base_model_probability": 0.058924,
+      "heuristic_probability": 0.0,
+      "risk_level": "low",
+      "effective_phishing_min_probability": 0.75,
+      "hard_rule_phishing": false,
+      "reasons": [
+        "trusted domain (-0.15)"
+      ],
+      "reason_details": [
+        {
+          "reason": "trusted domain",
+          "weight": -0.15,
+          "signal": "trust"
+        }
+      ]
+    },
+    {
+      "prediction": "phishing",
+      "risk_score": 90.0,
+      "confidence": "high",
+      "confidence_score": 0.8,
+      "probability": 0.9,
+      "risk_score_sigmoid": 88.08,
+      "model_threshold": 0.867818,
+      "risk_bands": {
+        "legitimate_max_probability": 0.4,
+        "phishing_min_probability": 0.75,
+        "adaptive_heuristic_trigger": 0.4,
+        "adaptive_phishing_min_probability": 0.6,
+        "hybrid_ml_weight": 0.7,
+        "hybrid_heuristic_weight": 0.3,
+        "max_combo_heuristic_adjustment": 0.3,
+        "max_hybrid_probability": 0.95,
+        "hard_rule_phishing_probability": 0.9
+      },
+      "dual_threshold_score": 0.9,
+      "dual_threshold_label": "phishing",
+      "dual_threshold_confidence": "high",
+      "top_risk_factors": [
+        "uses_https",
+        "has_ip_address",
+        "url_length"
+      ],
+      "feature_contributions": [
+        {
+          "feature": "uses_https",
+          "feature_value": 0.0,
+          "contribution": 0.209072,
+          "description": "HTTPS usage lowers risk but is not sufficient by itself."
+        },
+        {
+          "feature": "has_ip_address",
+          "feature_value": 1.0,
+          "contribution": 0.040429,
+          "description": "Using a raw IP address is a strong phishing signal."
+        },
+        {
+          "feature": "url_length",
+          "feature_value": 50.0,
+          "contribution": 0.04011,
+          "description": "Long URLs can hide malicious paths and confuse users."
+        }
+      ],
+      "extracted_features": {
+        "url_length": 50.0,
+        "has_ip_address": 1.0,
+        "uses_https": 0.0,
+        "num_dots": 3.0,
+        "suspicious_keywords": 1.0,
+        "has_hyphen": 0.0,
+        "subdomain_count": 0.0,
+        "has_at_symbol": 0.0,
+        "has_double_slash": 0.0,
+        "has_shortener": 0.0,
+        "has_port": 0.0,
+        "contains_https_token": 0.0
+      },
+      "model_name": "random_forest_calibrated",
+      "url": "http://185.23.54.11/bank/login.php?redirect=secure",
+      "risk_band": "phishing",
+      "base_model_probability": 0.18496,
+      "heuristic_probability": 0.6,
+      "risk_level": "high",
+      "effective_phishing_min_probability": 0.6,
+      "hard_rule_phishing": true,
+      "reasons": [
+        "IP address used (+0.50)",
+        "no HTTPS (+0.08)",
+        "login keyword (+0.12)",
+        "IP address with login path (+0.30)",
+        "hard rule: IP address login URL (+0.00)"
+      ],
+      "reason_details": [
+        {
+          "reason": "IP address used",
+          "weight": 0.5,
+          "signal": "risk"
+        },
+        {
+          "reason": "no HTTPS",
+          "weight": 0.08,
+          "signal": "risk"
+        },
+        {
+          "reason": "login keyword",
+          "weight": 0.12,
+          "signal": "risk"
+        },
+        {
+          "reason": "IP address with login path",
+          "weight": 0.3,
+          "signal": "risk"
+        },
+        {
+          "reason": "hard rule: IP address login URL",
+          "weight": 0.0,
+          "signal": "rule"
+        }
+      ]
+    }
+  ],
+  "sanity_tests": [
+    {
+      "url": "http://192.168.1.1/login",
+      "expected": "suspicious_or_phishing",
+      "observed": "phishing",
+      "prediction": "phishing",
+      "probability": 0.9,
+      "model_threshold": 0.867818,
+      "risk_bands": {
+        "legitimate_max_probability": 0.4,
+        "phishing_min_probability": 0.75,
+        "adaptive_heuristic_trigger": 0.4,
+        "adaptive_phishing_min_probability": 0.6,
+        "hybrid_ml_weight": 0.7,
+        "hybrid_heuristic_weight": 0.3,
+        "max_combo_heuristic_adjustment": 0.3,
+        "max_hybrid_probability": 0.95,
+        "hard_rule_phishing_probability": 0.9
+      },
+      "risk_score": 90.0,
+      "passed": true
+    },
+    {
+      "url": "https://google.com",
+      "expected": "legitimate",
+      "observed": "legitimate",
+      "prediction": "legitimate",
+      "probability": 0.036425,
+      "model_threshold": 0.867818,
+      "risk_bands": {
+        "legitimate_max_probability": 0.4,
+        "phishing_min_probability": 0.75,
+        "adaptive_heuristic_trigger": 0.4,
+        "adaptive_phishing_min_probability": 0.6,
+        "hybrid_ml_weight": 0.7,
+        "hybrid_heuristic_weight": 0.3,
+        "max_combo_heuristic_adjustment": 0.3,
+        "max_hybrid_probability": 0.95,
+        "hard_rule_phishing_probability": 0.9
+      },
+      "risk_score": 3.64,
+      "passed": true
+    },
+    {
+      "url": "https://secure-amazon-login.com",
+      "expected": "suspicious_or_phishing",
+      "observed": "suspicious",
+      "prediction": "suspicious",
+      "probability": 0.271078,
+      "model_threshold": 0.867818,
+      "risk_bands": {
+        "legitimate_max_probability": 0.4,
+        "phishing_min_probability": 0.75,
+        "adaptive_heuristic_trigger": 0.4,
+        "adaptive_phishing_min_probability": 0.6,
+        "hybrid_ml_weight": 0.7,
+        "hybrid_heuristic_weight": 0.3,
+        "max_combo_heuristic_adjustment": 0.3,
+        "max_hybrid_probability": 0.95,
+        "hard_rule_phishing_probability": 0.9
+      },
+      "risk_score": 27.11,
+      "passed": true
+    }
+  ]
+}

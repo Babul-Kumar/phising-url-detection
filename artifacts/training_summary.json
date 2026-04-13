@@ -1,0 +1,429 @@
+{
+  "dataset_path": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\data\\phishing_websites.csv",
+  "dataset_rows": 11055,
+  "class_distribution": {
+    "legitimate": 6157,
+    "phishing": 4898
+  },
+  "feature_count": 12,
+  "feature_names": [
+    "url_length",
+    "has_ip_address",
+    "uses_https",
+    "num_dots",
+    "suspicious_keywords",
+    "has_hyphen",
+    "subdomain_count",
+    "has_at_symbol",
+    "has_double_slash",
+    "has_shortener",
+    "has_port",
+    "contains_https_token"
+  ],
+  "missing_values_before_imputation": 0,
+  "selected_model": "random_forest_calibrated",
+  "selected_threshold": 0.867818,
+  "selected_metrics": {
+    "threshold": 0.867818,
+    "accuracy": 0.7671,
+    "precision": 0.9568,
+    "recall": 0.4969,
+    "f1_score": 0.6541,
+    "roc_auc": 0.9091,
+    "average_precision": 0.8834,
+    "false_positive_rate": 0.017872,
+    "false_positives": 22,
+    "false_negatives": 493,
+    "true_positives": 487,
+    "true_negatives": 1209,
+    "confusion_matrix": [
+      [
+        1209,
+        22
+      ],
+      [
+        493,
+        487
+      ]
+    ]
+  },
+  "comparison": [
+    {
+      "model_name": "random_forest",
+      "threshold": 0.8177581297249875,
+      "accuracy": 0.7734,
+      "precision": 0.9579,
+      "recall": 0.5112,
+      "f1_score": 0.6667,
+      "false_positives": 22,
+      "false_positive_rate": 0.017872,
+      "roc_auc": 0.91
+    },
+    {
+      "model_name": "random_forest_calibrated",
+      "threshold": 0.8678181602383427,
+      "accuracy": 0.7671,
+      "precision": 0.9568,
+      "recall": 0.4969,
+      "f1_score": 0.6541,
+      "false_positives": 22,
+      "false_positive_rate": 0.017872,
+      "roc_auc": 0.9091
+    },
+    {
+      "model_name": "xgboost",
+      "threshold": 0.8265315890312195,
+      "accuracy": 0.7806,
+      "precision": 0.9492,
+      "recall": 0.5337,
+      "f1_score": 0.6832,
+      "false_positives": 28,
+      "false_positive_rate": 0.022746,
+      "roc_auc": 0.9082
+    },
+    {
+      "model_name": "logistic_regression",
+      "threshold": 0.9074633779322802,
+      "accuracy": 0.6866,
+      "precision": 0.9208,
+      "recall": 0.3204,
+      "f1_score": 0.4754,
+      "false_positives": 27,
+      "false_positive_rate": 0.021933,
+      "roc_auc": 0.8951
+    }
+  ],
+  "models": {
+    "logistic_regression": {
+      "model_name": "logistic_regression",
+      "threshold": 0.907463,
+      "metrics": {
+        "threshold": 0.907463,
+        "accuracy": 0.6866,
+        "precision": 0.9208,
+        "recall": 0.3204,
+        "f1_score": 0.4754,
+        "roc_auc": 0.8951,
+        "average_precision": 0.8678,
+        "false_positive_rate": 0.021933,
+        "false_positives": 27,
+        "false_negatives": 666,
+        "true_positives": 314,
+        "true_negatives": 1204,
+        "confusion_matrix": [
+          [
+            1204,
+            27
+          ],
+          [
+            666,
+            314
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\logistic_regression_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\logistic_regression_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\logistic_regression_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\logistic_regression_roc_thresholds.csv"
+      }
+    },
+    "random_forest": {
+      "model_name": "random_forest",
+      "threshold": 0.817758,
+      "metrics": {
+        "threshold": 0.817758,
+        "accuracy": 0.7734,
+        "precision": 0.9579,
+        "recall": 0.5112,
+        "f1_score": 0.6667,
+        "roc_auc": 0.91,
+        "average_precision": 0.8857,
+        "false_positive_rate": 0.017872,
+        "false_positives": 22,
+        "false_negatives": 479,
+        "true_positives": 501,
+        "true_negatives": 1209,
+        "confusion_matrix": [
+          [
+            1209,
+            22
+          ],
+          [
+            479,
+            501
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_roc_thresholds.csv"
+      }
+    },
+    "xgboost": {
+      "model_name": "xgboost",
+      "threshold": 0.826532,
+      "metrics": {
+        "threshold": 0.826532,
+        "accuracy": 0.7806,
+        "precision": 0.9492,
+        "recall": 0.5337,
+        "f1_score": 0.6832,
+        "roc_auc": 0.9082,
+        "average_precision": 0.8871,
+        "false_positive_rate": 0.022746,
+        "false_positives": 28,
+        "false_negatives": 457,
+        "true_positives": 523,
+        "true_negatives": 1203,
+        "confusion_matrix": [
+          [
+            1203,
+            28
+          ],
+          [
+            457,
+            523
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\xgboost_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\xgboost_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\xgboost_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\xgboost_roc_thresholds.csv"
+      }
+    },
+    "random_forest_calibrated": {
+      "model_name": "random_forest_calibrated",
+      "threshold": 0.867818,
+      "metrics": {
+        "threshold": 0.867818,
+        "accuracy": 0.7671,
+        "precision": 0.9568,
+        "recall": 0.4969,
+        "f1_score": 0.6541,
+        "roc_auc": 0.9091,
+        "average_precision": 0.8834,
+        "false_positive_rate": 0.017872,
+        "false_positives": 22,
+        "false_negatives": 493,
+        "true_positives": 487,
+        "true_negatives": 1209,
+        "confusion_matrix": [
+          [
+            1209,
+            22
+          ],
+          [
+            493,
+            487
+          ]
+        ]
+      },
+      "artifacts": {
+        "confusion_matrix": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_calibrated_confusion_matrix.png",
+        "precision_recall_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_calibrated_precision_recall_curve.png",
+        "roc_curve": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_calibrated_roc_curve.png",
+        "threshold_curve_csv": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_calibrated_roc_thresholds.csv",
+        "feature_importance": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_calibrated_feature_importance.png",
+        "shap_summary": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts\\random_forest_calibrated_shap_summary.png"
+      }
+    }
+  },
+  "model_output_path": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\models\\phishing_website_detector.joblib",
+  "artifacts_directory": "C:\\Users\\babul\\OneDrive\\Desktop\\secret\\sam\\artifacts",
+  "xgboost_available": true,
+  "example_predictions": [
+    {
+      "prediction": "legitimate",
+      "risk_score": 31.4,
+      "confidence": "medium",
+      "probability": 0.313958,
+      "risk_score_sigmoid": 28.29,
+      "threshold": 0.867818,
+      "dual_threshold_score": 0.8,
+      "dual_threshold_label": "phishing",
+      "dual_threshold_confidence": "high",
+      "top_risk_factors": [
+        "has_double_slash",
+        "subdomain_count",
+        "num_dots"
+      ],
+      "feature_contributions": [
+        {
+          "feature": "has_double_slash",
+          "feature_value": 0.0,
+          "contribution": 0.083225,
+          "description": "Double slashes in the path can indicate redirect tricks."
+        },
+        {
+          "feature": "subdomain_count",
+          "feature_value": 1.0,
+          "contribution": 0.070583,
+          "description": "Too many subdomains can hide the true registrable domain."
+        },
+        {
+          "feature": "num_dots",
+          "feature_value": 2.0,
+          "contribution": 0.060366,
+          "description": "Many dots often indicate deceptive nesting and fake subdomains."
+        }
+      ],
+      "extracted_features": {
+        "url_length": 69.0,
+        "has_ip_address": 0.0,
+        "uses_https": 1.0,
+        "num_dots": 2.0,
+        "suspicious_keywords": 4.0,
+        "has_hyphen": 4.0,
+        "subdomain_count": 1.0,
+        "has_at_symbol": 0.0,
+        "has_double_slash": 0.0,
+        "has_shortener": 0.0,
+        "has_port": 0.0,
+        "contains_https_token": 0.0
+      },
+      "model_name": "random_forest_calibrated",
+      "url": "https://secure-paypal-login.verify-account-update.xyz/session/confirm"
+    },
+    {
+      "prediction": "legitimate",
+      "risk_score": 5.89,
+      "confidence": "low",
+      "probability": 0.058924,
+      "risk_score_sigmoid": 9.93,
+      "threshold": 0.867818,
+      "dual_threshold_score": 0.058924,
+      "dual_threshold_label": "legitimate",
+      "dual_threshold_confidence": "low",
+      "top_risk_factors": [
+        "num_dots",
+        "has_double_slash",
+        "url_length"
+      ],
+      "feature_contributions": [
+        {
+          "feature": "num_dots",
+          "feature_value": 2.0,
+          "contribution": 0.035713,
+          "description": "Many dots often indicate deceptive nesting and fake subdomains."
+        },
+        {
+          "feature": "has_double_slash",
+          "feature_value": 0.0,
+          "contribution": 0.034476,
+          "description": "Double slashes in the path can indicate redirect tricks."
+        },
+        {
+          "feature": "url_length",
+          "feature_value": 34.0,
+          "contribution": 0.003475,
+          "description": "Long URLs can hide malicious paths and confuse users."
+        }
+      ],
+      "extracted_features": {
+        "url_length": 34.0,
+        "has_ip_address": 0.0,
+        "uses_https": 1.0,
+        "num_dots": 2.0,
+        "suspicious_keywords": 0.0,
+        "has_hyphen": 0.0,
+        "subdomain_count": 0.0,
+        "has_at_symbol": 0.0,
+        "has_double_slash": 0.0,
+        "has_shortener": 0.0,
+        "has_port": 0.0,
+        "contains_https_token": 0.0
+      },
+      "model_name": "random_forest_calibrated",
+      "url": "https://www.microsoft.com/security"
+    },
+    {
+      "prediction": "legitimate",
+      "risk_score": 18.5,
+      "confidence": "low",
+      "probability": 0.18496,
+      "risk_score_sigmoid": 17.15,
+      "threshold": 0.867818,
+      "dual_threshold_score": 0.9,
+      "dual_threshold_label": "phishing",
+      "dual_threshold_confidence": "high",
+      "top_risk_factors": [
+        "uses_https",
+        "has_ip_address",
+        "url_length"
+      ],
+      "feature_contributions": [
+        {
+          "feature": "uses_https",
+          "feature_value": 0.0,
+          "contribution": 0.209072,
+          "description": "HTTPS usage lowers risk but is not sufficient by itself."
+        },
+        {
+          "feature": "has_ip_address",
+          "feature_value": 1.0,
+          "contribution": 0.040429,
+          "description": "Using a raw IP address is a strong phishing signal."
+        },
+        {
+          "feature": "url_length",
+          "feature_value": 50.0,
+          "contribution": 0.04011,
+          "description": "Long URLs can hide malicious paths and confuse users."
+        }
+      ],
+      "extracted_features": {
+        "url_length": 50.0,
+        "has_ip_address": 1.0,
+        "uses_https": 0.0,
+        "num_dots": 3.0,
+        "suspicious_keywords": 3.0,
+        "has_hyphen": 0.0,
+        "subdomain_count": 0.0,
+        "has_at_symbol": 0.0,
+        "has_double_slash": 0.0,
+        "has_shortener": 0.0,
+        "has_port": 0.0,
+        "contains_https_token": 0.0
+      },
+      "model_name": "random_forest_calibrated",
+      "url": "http://185.23.54.11/bank/login.php?redirect=secure"
+    }
+  ],
+  "sanity_tests": [
+    {
+      "url": "http://192.168.1.1/login",
+      "expected": "phishing",
+      "observed": "phishing",
+      "binary_prediction": "legitimate",
+      "probability": 0.18496,
+      "threshold": 0.867818,
+      "risk_score": 18.5,
+      "passed": true
+    },
+    {
+      "url": "https://google.com",
+      "expected": "legitimate",
+      "observed": "legitimate",
+      "binary_prediction": "legitimate",
+      "probability": 0.052036,
+      "threshold": 0.867818,
+      "risk_score": 5.2,
+      "passed": true
+    },
+    {
+      "url": "https://secure-amazon-login.com",
+      "expected": "suspicious_or_phishing",
+      "observed": "suspicious",
+      "binary_prediction": "legitimate",
+      "probability": 0.130111,
+      "threshold": 0.867818,
+      "risk_score": 13.01,
+      "passed": true
+    }
+  ]
+}
